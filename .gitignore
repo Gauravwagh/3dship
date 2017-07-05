@@ -1,0 +1,14 @@
+*.pyc
+.DS_Store
+*.swp
+/venv/
+/static/
+/media/
+/.vagrant/
+ansible/.vagrant/
+/Vagrantfile.local
+/docs/_build/
+node_modules
+pages/static/libs
+
+.idea/
