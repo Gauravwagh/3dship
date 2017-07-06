@@ -2,6 +2,15 @@ from .serializers import ContainerPositionSerializers
 from .models import Ports, ContainerPosition
 
 def pos_cal(self, port_number, num_of_containers, serializer, all_portss, pos_const):
+    '''
+    :param self:
+    :param port_number:
+    :param num_of_containers:
+    :param serializer:
+    :param all_portss:
+    :param pos_const:
+    :return: "Success string"
+    '''
     x = pos_const.x_constant
     y = pos_const.y_constant
     z = pos_const.z_constant

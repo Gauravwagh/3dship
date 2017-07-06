@@ -1,21 +1,9 @@
-from functools import reduce
-
-from django.db.models import Q
-from django.conf import settings
-import datetime
-from django.contrib.contenttypes.models import ContentType
-
 # Third party imports
 from rest_framework import viewsets
 from rest_framework import status
-from rest_framework import filters
-from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException, ParseError
-from rest_framework import permissions
-from rest_framework import mixins
-from rest_framework.authentication import TokenAuthentication
 
 # from app imports ------
 from .serializers import ContainerPositionSerializers, PortsSerializers
@@ -30,13 +18,23 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class PortsViewSet(viewsets.ModelViewSet):
     """
-    This view-set contains all APIs related to a booking.
+    This view-set contains all APIs related to a Ports.
+
     """
 
     queryset = Ports.objects.all()
     serializer_class = PortsSerializers
 
     def create(self, request, *args, **kwargs):
+        '''
+        Overriting the ModelViewSet's create method
+        Creating ports and Containers object.
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
 
         data = Ports.objects.filter(port_number=int(request.data['port_number']))
         if data:
@@ -53,6 +51,7 @@ class PortsViewSet(viewsets.ModelViewSet):
         if all_cont_new > 250:
             raise ParseError("Container count should not be greater than 250.")
         else:
+            #  Call method in utils file ------
             pos_cal(self, port_number, num_of_containers, serializer, all_portss, pos_const)
 
         main_port_obj = Ports.objects.get(port_number=port_number)
@@ -62,18 +61,12 @@ class PortsViewSet(viewsets.ModelViewSet):
         return Response(ser.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class ContainerPositionViewSet(viewsets.ModelViewSet):
+class ContainerPositionViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    This view-set contains all APIs related to a booking.
+    This view-set contains all APIs related to a containerpositions.
+    This viewset is read only viewset. It does not allow POST request
     """
 
     queryset = ContainerPosition.objects.all()
     serializer_class = ContainerPositionSerializers
-
-    filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter)
-    # filter_class = BlogPageFilter
-    # pagination_class = StandardResultsSetPagination
-
-    # search_fields = (
-    #     'id', 'tags__name', 'title', 'live', 'date', 'is_featured', 'body',
-    # )
+    pagination_class = StandardResultsSetPagination
